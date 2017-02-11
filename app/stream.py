@@ -21,7 +21,7 @@ class StreamSocial():
         result["type"] = "tweet"
         return result,status.id
   
-    def twitterSearch(self, search ,start_date, end_date, mode, location, sinceid, old_post):
+    def twitterSearch(self, search ,start_date, end_date, mode, location, sinceid, old_post, results_number):
         results = []
         api = self.twitterApiObj
         q ="#"+search+" since:"+start_date+" until:"+end_date
@@ -34,12 +34,14 @@ class StreamSocial():
             if last_id > sinceid:
                 sinceid = last_id
             results.append(status_process)
+            if len(results) == results_number:
+                break
 
         return results,sinceid
         
-    def _getSearchResults(self, search,start_date, end_date, mode, location,type_search, sinceid,old_post):
+    def _getSearchResults(self, search,start_date, end_date, mode, location,type_search, sinceid,old_post, results_number):
         if type_search == "tweets":
-            return self.twitterSearch(search,start_date, end_date, mode, location, sinceid,old_post)
+            return self.twitterSearch(search,start_date, end_date, mode, location, sinceid,old_post,results_number)
         return [], 0
 
 
