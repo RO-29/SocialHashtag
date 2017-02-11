@@ -25,7 +25,8 @@ def getRequstParams(request):
   old_post   = int(request.args.get("old",1))
   return start_date, end_date, insta, tweet, mode,location,old_post
 
-sinceid = 0
+sinceidTwitter = 0
+sinceidInsta   = 0
 
 @app.route('/get/posts')
 def index():
@@ -36,13 +37,13 @@ def index():
   start_date, end_date, insta, tweet, mode,location,old_post = getRequstParams(request)
   response = {"data":[]}
   
-  global sinceid
+  global sinceidTwitter, sinceidInsta
   response_twitter = []
   response_insta = []
   if tweet:
-    response_twitter,sinceid = stream.StreamSocial()._getSearchResults(search_term,start_date, end_date, mode, location,"tweets", sinceid,old_post)
+    response_twitter,sinceidTwitter = stream.StreamSocial()._getSearchResults(search_term,start_date, end_date, mode, location,"tweets", sinceidTwitter,old_post)
   if insta:
-    response_insta , sinceid = stream.StreamSocial()._getSearchResults(search_term,start_date, end_date, mode, location,"tweets", sinceid,old_post)
+    response_insta , sinceidInsta = stream.StreamSocial()._getSearchResults(search_term,start_date, end_date, mode, location,"insta", sinceidInsta,old_post)
   response["data"]+=response_twitter + response_insta
   return jsonify(response)
 

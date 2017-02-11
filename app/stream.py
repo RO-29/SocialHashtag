@@ -5,7 +5,7 @@ import datetime
 class StreamSocial():
 
     def __init__(self):
-        self.twitterApiObj = oauthsocial.TwitterAuth()._getAPIObj()
+        self.twitterApiObj, self.instaAccessToken = oauthsocial.TwitterAuth()._getAPIObj()
 
     def process_tweets(self, status,mode):
         result = {}
@@ -17,10 +17,9 @@ class StreamSocial():
         result["name"] = status.user.name
         result["displayFlag"] = mode
         result["time"] = (status.created_at +datetime.timedelta(hours = 5,minutes = 30)).strftime("%Y-%m-%d %H:%M:%S")
-        result["linkOriginalPost"] = "https://twitter.com/{screen_name}/{id}".format(screen_name = result["screenName"], id = status.id)
+        result["linkOriginalPost"] = "https://twitter.com/{screen_name}/status/{id}".format(screen_name = result["screenName"], id = status.id)
         result["type"] = "tweet"
         return result,status.id
-        
   
     def twitterSearch(self, search ,start_date, end_date, mode, location, sinceid, old_post):
         results = []
@@ -29,7 +28,7 @@ class StreamSocial():
         cursor = tweepy.Cursor(api.search, q =q)
         if sinceid >0 and not old_post:
             cursor = tweepy.Cursor(api.search, q =q, since_id = sinceid)
-            print "sinceid"
+
         for status in cursor.items():
             status_process,last_id = self.process_tweets(status, mode)
             if last_id > sinceid:
@@ -41,6 +40,6 @@ class StreamSocial():
     def _getSearchResults(self, search,start_date, end_date, mode, location,type_search, sinceid,old_post):
         if type_search == "tweets":
             return self.twitterSearch(search,start_date, end_date, mode, location, sinceid,old_post)
-        return 
+        return [], 0
 
 
