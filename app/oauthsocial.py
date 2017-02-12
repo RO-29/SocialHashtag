@@ -87,7 +87,7 @@ class SocialAuth():
             print('Unexpected Exception In Login file: %s' % e)
             pass
 
-        return users{}
+        return users
 
 
     def __init__(self): 
