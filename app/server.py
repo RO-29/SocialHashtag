@@ -22,8 +22,8 @@ def welcome():
 def getRequstParams(request):
   start_date      = request.args.get("start_date",datetime.datetime.now().strftime("%Y-%m-%d"))
   end_date        = request.args.get("end_date",(datetime.datetime.now()+datetime.timedelta(days=1)).strftime("%Y-%m-%d"))
-  insta           = request.args.get("insta",1)
-  tweet           = request.args.get("tweets",1)
+  insta           = int(request.args.get("insta",1))
+  tweet           = int(request.args.get("tweets",1))
   mode            = {"auto":1, "manual":0}.get(request.args.get("mode","auto").lower(),1)
   location        = request.args.get("location","") 
   old_post        = int(request.args.get("old",1))
