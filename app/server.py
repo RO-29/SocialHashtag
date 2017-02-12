@@ -3,13 +3,13 @@ import requests
 import os
 import sys
 from flask import Flask,jsonify
-from flask import request, session, g, redirect, url_for, abort, flash, _app_ctx_stack
+from flask import request, session, g, redirect, url_for, abort, flash, _app_ctx_stack, render_template
 import stream
 import datetime
 from flask import Flask
 from flask_cors import CORS, cross_origin
 
-app = Flask(__name__,static_url_path='/static')
+app = Flask(__name__,static_url_path='/root/SocialHashtag/grapevine-social/public')
 
 CORS(app)
 
@@ -31,7 +31,7 @@ def getRequstParams(request):
   return start_date, end_date, insta, tweet, mode,location,old_post,results_number
 
 sinceidTwitter = 0
-sinceidInsta   = 0
+sinceidInsta   = []
 
 @app.route('/get/posts')
 def index():
@@ -53,6 +53,7 @@ def index():
   return jsonify(response)
 
 if __name__=="__main__":
-   app.run(host="0.0.0.0",port=int(8080),debug=True)
+   app.run(host="0.0.0.0",port=int(5000),debug=True)
+
 
 
