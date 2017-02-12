@@ -41,7 +41,7 @@ class StreamSocial():
 
 
     def process_insta(self, status, mode):
-        results = {}
+        result = {}
         user = status.get("user",{})
         try:
             date_created = status.get("taken_at","")
@@ -61,18 +61,20 @@ class StreamSocial():
         result["mediaLink"]        = media_link
         result["includMedia"]      = 1
         result["content"]          = caption
-        result["userDisplay"]      = user.get("profile_picture","")
+        result["userDisplay"]      = user.get("profile_pic_url","")
         result["screenName"]       = user.get("username","")
         result["name"]             = user.get("full_name","")
         result["displayFlag"]      = mode
         result["time"]             = date_created
-        result["linkOriginalPost"] = "https://www.instagram.com/p/{insta_post}/".format(insta_post = status.get("code","")
+        result["linkOriginalPost"] = "https://www.instagram.com/p/{insta_post}/".format(insta_post = status.get("code",""))
         result["type"]             = "insta"
+        return result
 
     def instaSearch(self, search, mode, location, sinceid, old_post, results_number):
-        results = []
-        search = search.split("#")[1] if "#" in search else search
-        instaPosts = api.feed_tag(q=search)
+        results    = []
+        api        = self.instaApiObj
+        search     = search.split("#")[1] if "#" in search else search
+        instaPosts = api.feed_tag(search)
         if "items" in instaPosts:
             posts = instaPosts["items"]
             try:
