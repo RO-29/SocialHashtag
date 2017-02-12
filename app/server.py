@@ -8,11 +8,59 @@ import stream
 import datetime
 from flask import Flask
 from flask_cors import CORS, cross_origin
+import flask_login
+import user
 
 app = Flask(__name__,static_url_path='/root/SocialHashtag/grapevine-social/public')
-
+app.secret_key = '#50C!@L@H@5HT@G!@SA'
 CORS(app)
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
 
+
+class User(flask_login.UserMixin):
+    pass
+
+@login_manager.user_loader
+def user_loader(email):
+    if email not in users:
+        return
+
+    user = User()
+    user.id = email
+    return user
+
+
+@login_manager.request_loader
+def request_loader(request):
+    email = request.form.get('username')
+    if email not in users:
+        return
+    user = User()
+    user.id = email
+    user.is_authenticated = request.form['password'] == users[email]['password']
+    return user
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    email = flask.request.form['username']
+    if flask.request.form['password'] == users[email]['password']:
+        user = User()
+        user.id = email
+        flask_login.login_user(user)
+        return flask.redirect(flask.url_for('protected'))
+
+    return 'Bad login'
+
+@app.route('/logout')
+def logout():
+    flask_login.logout_user()
+    return 'Logged out'
+
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    return 'Unauthorized'
 
 @app.route('/')
 def welcome():
@@ -33,7 +81,9 @@ def getRequstParams(request):
 sinceidTwitter = 0
 sinceidInsta   = []
 
+
 @app.route('/get/posts')
+@flask_login.login_required
 def index():
   search_term = str(request.args.get("hashtag",""))
   search_term = search_term.split("#")[1] if len(search_term.split("#")) >=2  else search_term
