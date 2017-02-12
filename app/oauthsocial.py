@@ -8,16 +8,18 @@ import instagram_private_api as app_api
 class SocialAuth():
 
     def onlogin_callback(self,api, new_settings_file):
-    cache_settings = api.settings
-    with open(new_settings_file, 'w') as outfile:
-        json.dump(cache_settings, outfile, indent=2)
-        print('SAVED: %s' % new_settings_file)
+        cache_settings = api.settings
+        with open(new_settings_file, 'w') as outfile:
+            json.dump(cache_settings, outfile, indent=2)
+            print('SAVED: %s' % new_settings_file)
 
 
     def instaLogin(self):
         #pip install git+ssh://git@github.com/ping/instagram_private_api.git@1.0.9
         print('Insta Client version: %s' % app_api.__version__)
         api = None
+        username = self.InstaUsername
+        password = self.InstaPassword   
         settings_file =self.settings_file_insta
         try:
             if not os.path.isfile(settings_file):
@@ -25,7 +27,7 @@ class SocialAuth():
                 print('Unable to find file: %s' % settings_file)
                 # login new
                 api = app_api.Client(
-                    self.InstaUsername, se;f.InstaPassword,
+                    username, password,
                     on_login=lambda x: self.onlogin_callback(x, settings_file))
             else:
                 with open(settings_file) as file_data:
@@ -34,17 +36,15 @@ class SocialAuth():
 
                 # reuse auth settings
                 api = app_api.Client(
-                    args.username, args.password,
+                    username, password,
                     settings=cached_settings)
-
         except (app_api.ClientCookieExpiredError, app_api.ClientLoginRequiredError) as e:
             print('ClientCookieExpiredError/ClientLoginRequiredError: %s' % e)
             # Login expired
             # Do relogin but use default ua, keys and such
             api = app_api.Client(
-                args.username, args.password,
+                username, password,
                 on_login=lambda x: self.onlogin_callback(x, settings_file))
-
         except app_api.ClientLoginError as e:
             print('ClientLoginError %s' % e)
             pass
@@ -56,8 +56,9 @@ class SocialAuth():
             pass
 
         # Show when login expires
-        cookie_expiry = api.cookie_jar.expires_earliest
-        print('Cookie Expiry: %s' % datetime.datetime.fromtimestamp(cookie_expiry).strftime('%Y-%m-%dT%H:%M:%SZ'))
+        if api:
+            cookie_expiry = api.cookie_jar.expires_earliest
+            print('Cookie Expiry: %s' % datetime.datetime.fromtimestamp(cookie_expiry).strftime('%Y-%m-%dT%H:%M:%SZ'))
         return api
 
 
@@ -79,7 +80,7 @@ class SocialAuth():
         
         #Todo Change this
         self.InstaUsername        = "rohit.sync"
-        self.InstaPassword        = "rohit2929_s"
+        self.InstaPassword        = "rohit2929_"
         self.settings_file_insta  = "insta_settings.txt"
 
         self._doOauth()
