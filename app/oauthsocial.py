@@ -64,7 +64,7 @@ class SocialAuth():
 
     def _save_loginFile(self, data):
         new_settings_file = self.login_file
-        with open(settings_file, 'w') as outfile:
+        with open(new_settings_file, 'w') as outfile:
             json.dump(data, outfile, indent=2)
             print('SAVED: %s' % new_settings_file)
 
@@ -76,7 +76,7 @@ class SocialAuth():
                 # settings file does not exist
                 print('Unable to find file: %s' % settings_file)
                 users = {'SocialHashtag@grapevine-social.com': {'password': '#50C!@L@H@5HT@G!@SA_password@!'}}
-                self._save_loginFile(data)
+                self._save_loginFile(users)
 
             else:
                 with open(settings_file) as file_data:

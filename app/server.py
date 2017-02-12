@@ -39,14 +39,16 @@ def reset():
   if username not in users:
     return "Invalid Username, does not exists."
   users[username] = password
-  oauthsocial.SocialAuth()._save_loginFile(data)
+  oauthsocial.SocialAuth()._save_loginFile(users)
+  return "Password Reset Done"
 
-@app.route("/adduser", methods = ["PUT"])
+@app.route("/adduser", methods = ["POST"])
 def adduser():
   username = request.json.get("username","")
   password = request.json.get("password","")
-  users[username] = password
-  oauthsocial.SocialAuth()._save_loginFile(data)
+  users[username] = {"password":password}
+  oauthsocial.SocialAuth()._save_loginFile(users)
+  return "Added New User"
 
 @login_manager.request_loader
 def request_loader(request):
@@ -100,7 +102,7 @@ sinceidInsta   = []
 
 
 @app.route('/get/posts')
-@flask_login.login_required
+#@flask_login.login_required
 def index():
   search_term = str(request.args.get("hashtag",""))
   search_term = search_term.split("#")[1] if len(search_term.split("#")) >=2  else search_term
