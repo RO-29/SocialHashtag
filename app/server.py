@@ -18,7 +18,7 @@ CORS(app)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
-users = oauthsocial.SocialAuth().getUsers()
+users = oauthsocial.SocialAuth()._getUsers()
 
 class User(flask_login.UserMixin):
     pass
