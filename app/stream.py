@@ -34,7 +34,7 @@ class StreamSocial():
             if last_id > sinceid:
                 sinceid = last_id
             results.append(status_process)
-            if len(results) >= results_number:
+            if results_number and len(results) >= results_number:
                 break
 
         return results,sinceid
