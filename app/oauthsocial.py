@@ -62,6 +62,34 @@ class SocialAuth():
         return api
 
 
+    def _save_loginFile(self, data):
+        new_settings_file = self.login_file
+        with open(settings_file, 'w') as outfile:
+            json.dump(data, outfile, indent=2)
+            print('SAVED: %s' % new_settings_file)
+
+    def _loginUsers(self):
+        settings_file  = self.login_file
+        users = {}
+        try:
+            if not os.path.isfile(settings_file):
+                # settings file does not exist
+                print('Unable to find file: %s' % settings_file)
+                users = {'SocialHashtag@grapevine-social.com': {'password': '#50C!@L@H@5HT@G!@SA_password@!'}}
+                self._save_loginFile(data)
+
+            else:
+                with open(settings_file) as file_data:
+                    users = json.load(file_data)
+                print('Reusing settings Login: %s' % settings_file)
+                
+        except Exception as e:
+            print('Unexpected Exception In Login file: %s' % e)
+            pass
+
+        return users{}
+
+
     def __init__(self): 
         
         #Twitter Tokens
@@ -83,6 +111,10 @@ class SocialAuth():
         self.InstaPassword        = "rohit2929_"
         self.settings_file_insta  = "insta_settings.txt"
 
+        #Login DataBase
+        self.login_file  = "login_settings.txt" 
+        self.users       = self._loginUsers()
+
         self._doOauth()
 
     def _doOauth(self):
@@ -93,6 +125,9 @@ class SocialAuth():
         self.twitterAPI = tweepy.API(self.authTwitter)
         self.instaAPI = self.instaLogin()
         return self.twitterAPI, self.instaAPI
+
+    def _getUsers(self):
+        return self.users
 
     def _refreshAPI(self):
         self.auth = self._doOauth()

@@ -10,6 +10,7 @@ from flask import Flask
 from flask_cors import CORS, cross_origin
 import flask_login
 import user
+import oauthsocial
 
 app = Flask(__name__,static_url_path='/root/SocialHashtag/grapevine-social/public')
 app.secret_key = '#50C!@L@H@5HT@G!@SA'
@@ -17,6 +18,7 @@ CORS(app)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
+users = oauthsocial.SocialAuth().getUsers()
 
 class User(flask_login.UserMixin):
     pass
@@ -30,26 +32,41 @@ def user_loader(email):
     user.id = email
     return user
 
+@app.route("/resetPassword", methods = ["PUT"])
+def reset():
+  username = request.json.get("username","")
+  password = request.json.get("password","")
+  if username not in users:
+    return "Invalid Username, does not exists."
+  users[username] = password
+  oauthsocial.SocialAuth()._save_loginFile(data)
+
+@app.route("/adduser", methods = ["PUT"])
+def adduser():
+  username = request.json.get("username","")
+  password = request.json.get("password","")
+  users[username] = password
+  oauthsocial.SocialAuth()._save_loginFile(data)
 
 @login_manager.request_loader
 def request_loader(request):
-    email = request.form.get('username')
+    email = request.json.get('username')
     if email not in users:
         return
     user = User()
     user.id = email
-    user.is_authenticated = request.form['password'] == users[email]['password']
+    user.is_authenticated = request.json['password'] == users[email]['password']
     return user
 
 
 @app.route('/login', methods=['POST'])
 def login():
-    email = flask.request.form['username']
-    if flask.request.form['password'] == users[email]['password']:
+    email = request.json['username']
+    if request.json['password'] == users[email]['password']:
         user = User()
         user.id = email
         flask_login.login_user(user)
-        return flask.redirect(flask.url_for('protected'))
+        return "logIn Success"
 
     return 'Bad login'
 
