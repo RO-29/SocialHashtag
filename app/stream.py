@@ -1,6 +1,7 @@
 import tweepy
 import oauthsocial
 import datetime
+import traceback
 
 class StreamSocial():
 
@@ -9,8 +10,15 @@ class StreamSocial():
 
     def process_tweets(self, status,mode):
         result = {}
-        result["mediaLink"] = ""
-        result["includMedia"] = 0
+        media       = status.entities.get("media",[])
+        includMedia = 0
+        media_url   = ""
+        if media:
+            media_url   = media[0].get("media_url","")
+            includMedia = 1
+
+        result["mediaLink"] = media_url
+        result["includMedia"] = includMedia
         result["content"] = status.text
         result["userDisplay"] = status.user.profile_image_url_https
         result["screenName"] = status.user.screen_name
@@ -71,16 +79,20 @@ class StreamSocial():
         return result
 
     def instaSearch(self, search, mode, location, sinceid, old_post, results_number):
-        results    = []
-        api        = self.instaApiObj
-        search     = search.split("#")[1] if "#" in search else search
-        instaPosts = api.feed_tag(search)
+        results      = []
+        api          = self.instaApiObj
+        search       = search.split("#")[1] if "#" in search else search
+        search       = search.split(" ")[0] 
+        try:
+            instaPosts = api.feed_tag(search)
+        except:
+            print traceback.format_exc()
         if "items" in instaPosts:
             posts = instaPosts["items"]
             try:
                 for post in posts:
                     post_code = post["code"]
-                    if not old_post or (old_post and post_code not in sinceid):
+                    if old_post or ((not old_post) and post_code not in sinceid):
                         status_process = self.process_insta(post, mode)
                         results.append(status_process)
                     if post_code not in sinceid:
@@ -89,6 +101,7 @@ class StreamSocial():
                         break
             except:
                 pass
+        
         return results, sinceid
         
         
