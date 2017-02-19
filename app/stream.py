@@ -62,6 +62,17 @@ class StreamSocial():
             media_link = ""
             pass
         try:
+            medias = status["image_versions"]["candidates"]
+            media_link = medias[0]["url"]
+        except:
+            pass
+        try:
+            medias = status["image_versions2"]["candidates"]
+            media_link = medias[0]["url"]
+        except:
+            pass
+
+        try:
             caption = status["caption"]["text"]
         except:
             caption = ""
