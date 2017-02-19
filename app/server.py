@@ -94,7 +94,7 @@ def getRequstParams(request):
   mode            = {"auto":1, "manual":0}.get(request.args.get("mode","auto").lower(),1)
   location        = request.args.get("location","") 
   old_post        = int(request.args.get("old",1))
-  results_number  = int(request.args.get("results_number",0))
+  results_number  = int(request.args.get("results_number",20))
   return start_date, end_date, insta, tweet, mode,location,old_post,results_number
 
 sinceidTwitter = 0

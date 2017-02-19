@@ -33,17 +33,20 @@ class StreamSocial():
         results = []
         api = self.twitterApiObj
         q ="#"+search+" since:"+start_date+" until:"+end_date
-        cursor = tweepy.Cursor(api.search, q =q)
-        if sinceid >0 and not old_post:
-            cursor = tweepy.Cursor(api.search, q =q, since_id = sinceid)
+        try:
+            cursor = tweepy.Cursor(api.search, q =q)
+            if sinceid >0 and not old_post:
+                cursor = tweepy.Cursor(api.search, q =q, since_id = sinceid)
 
-        for status in cursor.items():
-            status_process,last_id = self.process_tweets(status, mode)
-            if last_id > sinceid:
-                sinceid = last_id
-            results.append(status_process)
-            if results_number and len(results) >= results_number:
-                break
+            for status in cursor.items():
+                status_process,last_id = self.process_tweets(status, mode)
+                if last_id > sinceid:
+                    sinceid = last_id
+                results.append(status_process)
+                if results_number and len(results) >= results_number:
+                    break
+        except:
+            pass
 
         return results,sinceid
 
