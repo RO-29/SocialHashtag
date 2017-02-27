@@ -46,9 +46,45 @@ def reset():
 def adduser():
   username = request.json.get("username","")
   password = request.json.get("password","")
+  settings = request.json.get("settings",{})
   users[username] = {"password":password}
+  try:
+      users[username]["settings"] = json.dumps(settings)
+  except:
+      import traceback;print traceback.format_exc()
+      pass
   oauthsocial.SocialAuth()._save_loginFile(users)
   return "Added New User"
+
+@app.route("/addusersettings", methods = ["POST"])
+def addusersettings():
+  username = request.json.get("username","")
+  settings = request.json.get("settings",{})
+  users_setting = oauthsocial.SocialAuth()._loginUsers()
+  try:
+      if "settings" in users_setting[username]:
+          settings_user = json.loads(users_setting[username]["settings"])
+          settings_user.update(settings)
+          users_setting[username]["settings"] = json.dumps(settings_user)
+      else:
+          users_setting[username]["settings"] = json.dumps(settings)
+      oauthsocial.SocialAuth()._save_loginFile(users_setting)
+      return "Added User settings"
+  except:
+      import traceback;print traceback.format_exc()
+      return "User not found"
+
+@app.route("/getusersettings", methods = ["GET"])
+def getuser():
+    try:
+        username = request.values.get("username","").split('"')[1]
+    except:
+        username = request.values.get("username","")
+    try:
+        users_setting = oauthsocial.SocialAuth()._loginUsers()
+        return jsonify(json.loads(users_setting[username]["settings"]))
+    except:
+        return jsonify({})
 
 @login_manager.request_loader
 def request_loader(request):
@@ -92,7 +128,7 @@ def getRequstParams(request):
   insta           = int(request.args.get("insta",1))
   tweet           = int(request.args.get("tweets",1))
   mode            = {"auto":1, "manual":0}.get(request.args.get("mode","auto").lower(),1)
-  location        = request.args.get("location","") 
+  location        = request.args.get("location","")
   old_post        = int(request.args.get("old",1))
   results_number  = int(request.args.get("results_number",20))
   return start_date, end_date, insta, tweet, mode,location,old_post,results_number
@@ -110,7 +146,7 @@ def index():
     return jsonify({"message":"Invalid/Missing mandatory hashtag value", "status":"HTTP_400_BAD_REQUEST"})
   start_date, end_date, insta, tweet, mode,location,old_post,results_number = getRequstParams(request)
   response = {"data":[]}
-  
+
   global sinceidTwitter, sinceidInsta
   response_twitter = []
   response_insta = []
@@ -123,6 +159,3 @@ def index():
 
 if __name__=="__main__":
    app.run(host="0.0.0.0",port=int(5000),debug=True)
-
-
-

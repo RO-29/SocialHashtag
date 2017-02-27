@@ -19,7 +19,7 @@ class SocialAuth():
         print('Insta Client version: %s' % app_api.__version__)
         api = None
         username = self.InstaUsername
-        password = self.InstaPassword   
+        password = self.InstaPassword
         settings_file =self.settings_file_insta
         try:
             if not os.path.isfile(settings_file):
@@ -82,16 +82,16 @@ class SocialAuth():
                 with open(settings_file) as file_data:
                     users = json.load(file_data)
                 print('Reusing settings Login: %s' % settings_file)
-                
+
         except Exception as e:
             print('Unexpected Exception In Login file: %s' % e)
             pass
-
         return users
 
 
-    def __init__(self): 
-        
+
+    def __init__(self):
+
         #Twitter Tokens
         # == OAuth Authentication ==
         # == https://dev.twitter.com/apps (under "OAuth settings")
@@ -99,27 +99,27 @@ class SocialAuth():
         self.consumerSecretTwitter    = "4FdQScnELAWr5xp4TvoDg6BKoeQ2JFXE4B5dPQJ0B9R2qYVRYV"
         self.accessTokenTwitter       = "313808280-zww8PwqqucUcrSEIDg1tGOmLfuYe3ZjzLHgBmejR"
         self.accessTokenSecretTwitter = "xMXV3EvHjx9fTphkXAOV6pMpCv53LK87s5BadXXiuYfIw"
-        
+
         #Insta Tokens
         #How to get?
         #https://www.instagram.com/oauth/authorize/?client_id=68926847741d41d082fb967e281c3fd3&redirect_uri=http://46.101.135.163:5000/&response_type=token&scope=public_content
         self.instaCLientID   = "68926847741d41d082fb967e281c3fd3"
         self.accessTokenInsta = "350728463.6892684.b52e38823bee41cc9338b4cad1bbfea4"
-        
+
         #Todo Change this
         self.InstaUsername        = "rohit.sync"
         self.InstaPassword        = "rohit2929_"
         self.settings_file_insta  = "insta_settings.txt"
 
         #Login DataBase
-        self.login_file  = "login_settings.txt" 
+        self.login_file  = "login_settings.txt"
         self.users       = self._loginUsers()
 
         self._doOauth()
 
     def _doOauth(self):
         self.authTwitter = tweepy.OAuthHandler(self.consumerKeyTwitter, self.consumerSecretTwitter)
-        self.authTwitter.set_access_token(self.accessTokenTwitter, self.accessTokenSecretTwitter)    
+        self.authTwitter.set_access_token(self.accessTokenTwitter, self.accessTokenSecretTwitter)
 
     def _getAPIObj(self):
         self.twitterAPI = tweepy.API(self.authTwitter)
@@ -131,9 +131,3 @@ class SocialAuth():
 
     def _refreshAPI(self):
         self.auth = self._doOauth()
-
-
-
-
-
-

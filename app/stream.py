@@ -28,7 +28,7 @@ class StreamSocial():
         result["linkOriginalPost"] = "https://twitter.com/{screen_name}/status/{id}".format(screen_name = result["screenName"], id = status.id)
         result["type"] = "tweet"
         return result,status.id
-  
+
     def twitterSearch(self, search ,start_date, end_date, mode, location, sinceid, old_post, results_number):
         results = []
         api = self.twitterApiObj
@@ -47,7 +47,7 @@ class StreamSocial():
                     break
         except:
             pass
-
+        results.reverse()
         return results,sinceid
 
 
@@ -96,7 +96,7 @@ class StreamSocial():
         results      = []
         api          = self.instaApiObj
         search       = search.split("#")[1] if "#" in search else search
-        search       = search.split(" ")[0] 
+        search       = search.split(" ")[0]
         try:
             instaPosts = api.feed_tag(search)
         except:
@@ -115,15 +115,13 @@ class StreamSocial():
                         break
             except:
                 pass
-        
+        results.reverse()
         return results, sinceid
-        
-        
+
+
     def _getSearchResults(self, search,start_date, end_date, mode, location,type_search, sinceid,old_post, results_number):
         if type_search == "tweets":
             return self.twitterSearch(search,start_date, end_date, mode, location, sinceid,old_post,results_number)
         if type_search == "insta" and self.instaApiObj:
             return self.instaSearch(search, mode, location, sinceid, old_post, results_number)
         return [], 0
-
-
